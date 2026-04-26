@@ -5,7 +5,7 @@ _MultiPrimer Designer_ is a bioinformatics desktop application for designing PCR
 It offers:
 
 * 🧬 **Variant loading & validation**\
-  Load genetic variants from CSV or XLSX files using HGVS notation (coding `c.` or genomic `g.`). Variants are automatically validated against MANE Select transcripts via NCBI and Ensembl APIs.
+  Load genetic variants from CSV files using HGVS notation (coding `c.` or genomic `g.`). Variants are automatically validated against MANE Select transcripts via NCBI and Ensembl APIs.
 
     <details><summary>Supported input format</summary>
 
@@ -28,7 +28,7 @@ It offers:
   Automatically converts CDS (`c.`) coordinates to genomic (`g.`) coordinates using Ensembl REST API, handling strand orientation, exon boundaries, and both GRCh38 and GRCh37/hg19 reference assemblies.
 
 * 🔬 **Primer design**\
-  Wraps the [Primer3](https://primer3.org/) engine to design PCR primers with amplicons 100–500 bp (configurable). Default primer constraints: Tm 57–64 °C, GC% 40–60%, length 18–27 bp.
+  Uses the [`primer3-py`](https://pypi.org/project/primer3-py/) Python library (Python bindings for the Primer3 algorithm) to design PCR primers with amplicons 100–500 bp (configurable). Default primer constraints: Tm 57–64 °C, GC% 40–60%, length 18–27 bp.
 
 * 🌍 **Population variant filtering**\
   Primers spanning common SNPs are automatically filtered out. Supports 10 gnomAD/Ensembl populations (global, AFR, EAS, EUR, SAS, AMI, AMR, ASJ, FIN, OTH) with a configurable MAF threshold (default: 0.5%).
