@@ -1,0 +1,82 @@
+{
+  "blast": {
+    "blastn_path": "blastn",
+    "makeblastdb_path": "makeblastdb",
+    "blast_db_path": "",
+    "threads": 4,
+    "evalue": 1e-10,
+    "min_percent_identity": 85.0,
+    "min_aligned_length": 50,
+    "max_target_seqs": 500,
+    "max_hsps": 3
+  },
+  "api": {
+    "ncbi_api_key": "",
+    "ncbi_email": "",
+    "request_timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0
+  },
+  "ensembl": {
+    "delay_seconds": 3.0,
+    "max_retries": 2
+  },
+  "bwa": {
+    "bwa_path": "bwa",
+    "genome_index_path": "",
+    "threads": 4,
+    "min_seed_length": 10,
+    "min_alignment_score": 20
+  },
+  "primer3": {
+    "primer_min_size": 18,
+    "primer_max_size": 27,
+    "primer_opt_size": 22,
+    "primer_min_tm": 57.0,
+    "primer_max_tm": 64.0,
+    "primer_opt_tm": 60.0,
+    "primer_min_gc": 40.0,
+    "primer_max_gc": 60.0,
+    "primer_opt_gc": 50.0,
+    "mv_conc": 50.0,
+    "dv_conc": 1.5,
+    "dntp_conc": 0.6,
+    "dna_conc": 50.0,
+    "max_self_complementarity": 8.0,
+    "max_end_complementarity": 3.0,
+    "max_pair_complementarity": 8.0,
+    "product_min_size": 100,
+    "product_max_size": 500,
+    "product_opt_size": 350,
+    "qpcr_product_min_size": 70,
+    "qpcr_product_max_size": 150,
+    "probe_min_size": 18,
+    "probe_max_size": 30,
+    "probe_min_tm": 65.0,
+    "probe_max_tm": 70.0,
+    "probe_opt_tm": 67.0
+  },
+  "population": {
+    "available_populations": [
+      "global",
+      "afr",
+      "ami",
+      "amr",
+      "asj",
+      "eas",
+      "fin",
+      "nfe",
+      "sas",
+      "oth"
+    ],
+    "default_maf_threshold": 0.005,
+    "default_selected_populations": [
+      "global"
+    ]
+  },
+  "default_assembly": "GRCh38",
+  "log_level": "INFO",
+  "max_concurrent_requests": 5,
+  "min_distance_from_exon_junction": 60,
+  "min_distance_from_variant": 40
+}

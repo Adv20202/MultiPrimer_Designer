@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primer Design Report</title>
+    <style>
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            opacity: 0.8;
+        }
+
+        section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box.success {
+            background: #d5f5e3;
+        }
+
+        .stat-box.warning {
+            background: #fdebd0;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .param-table th, .param-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .param-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .result-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .result-header {
+            background: #f8f9fa;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-header:hover {
+            background: #ecf0f1;
+        }
+
+        .result-header.success {
+            border-left: 4px solid #27ae60;
+        }
+
+        .result-header.failed {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .result-body {
+            padding: 20px;
+            display: none;
+        }
+
+        .result-body.active {
+            display: block;
+        }
+
+        .variant-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .primer-sequence {
+            font-family: 'Courier New', monospace;
+            background: #2c3e50;
+            color: #2ecc71;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 5px 0;
+            word-break: break-all;
+        }
+
+        .primer-pair {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .primer-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .suggestion-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .specificity-box {
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .specificity-box.specific {
+            background: #d5f5e3;
+            border-left-color: #27ae60;
+        }
+
+        .specificity-box.likely-specific {
+            background: #d5f5e3;
+            border-left-color: #2ecc71;
+        }
+
+        .specificity-box.off-target {
+            background: #fadbd8;
+            border-left-color: #e74c3c;
+        }
+
+        .specificity-box.pseudogene {
+            background: #f5b7b1;
+            border-left-color: #922b21;
+        }
+
+        .specificity-box.inconclusive {
+            background: #fdebd0;
+            border-left-color: #f39c12;
+        }
+
+        .specificity-box.not-checked {
+            background: #f8f9fa;
+            border-left-color: #bdc3c7;
+        }
+
+        .verdict-label {
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+
+        .tool-summary {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .off-target-detail {
+            font-size: 0.85em;
+            color: #922b21;
+            margin-top: 3px;
+            padding-left: 15px;
+        }
+
+        .pseudogene-warning {
+            font-weight: bold;
+            color: #922b21;
+            margin-top: 6px;
+        }
+
+        .pair-rank {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .pair-rank.best {
+            background: #27ae60;
+        }
+
+        .homology-box {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .homology-box.good {
+            background: #d5f5e3;
+            border-left-color: #27ae60;
+        }
+
+        .homology-box.moderate {
+            background: #fdebd0;
+            border-left-color: #f39c12;
+        }
+
+        .homology-box.weak {
+            background: #fadbd8;
+            border-left-color: #e74c3c;
+        }
+
+        .homology-box.none {
+            background: #f5b7b1;
+            border-left-color: #922b21;
+        }
+
+        .homology-label {
+            font-weight: bold;
+        }
+
+        .homology-detail {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        .tier-box {
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .tier-box.tier-1 {
+            background: #d5f5e3;
+            border-left-color: #27ae60;
+        }
+
+        .tier-box.tier-2 {
+            background: #d6eaf8;
+            border-left-color: #2980b9;
+        }
+
+        .tier-box.tier-3 {
+            background: #fdebd0;
+            border-left-color: #f39c12;
+        }
+
+        .tier-box.tier-0 {
+            background: #f8f9fa;
+            border-left-color: #bdc3c7;
+        }
+
+        .tier-label {
+            font-weight: bold;
+            font-size: 1.0em;
+        }
+
+        .tier-detail {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .homology-regions-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .homology-regions-table tbody td {
+            padding: 3px 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .methodology-text {
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .methodology-text h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .methodology-text p {
+            margin-bottom: 12px;
+        }
+
+        .methodology-text ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .methodology-text li {
+            margin-bottom: 4px;
+        }
+
+        .methodology-note {
+            background: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 12px 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+            font-style: italic;
+            color: #7d6608;
+        }
+
+        .variant-detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .variant-detail-table th, .variant-detail-table td {
+            padding: 6px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .variant-detail-table th {
+            background: #f0f3f4;
+            font-weight: 600;
+        }
+
+        @media print {
+            .result-body {
+                display: block !important;
+            }
+            .expand-icon {
+                display: none;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Primer Design Report</h1>
+            <p class="timestamp">Generated: 2026-04-25 20:50:56</p>
+        </header>
+
+        <section class="summary">
+            <h2>Summary</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Total Variants</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Design Groups</span>
+                </div>
+                <div class="stat-box success">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Successful Designs</span>
+                </div>
+                <div class="stat-box success">
+                    <span class="stat-value">5/5</span>
+                    <span class="stat-label">Success Rate</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="parameters">
+            <h2>Design Parameters</h2>
+            
+        <table class="param-table">
+            <tr><th colspan="2">Amplicon Settings</th></tr>
+            <tr><td>Amplicon Size Range</td><td>100 - 500 bp</td></tr>
+            <tr><td>qPCR Amplicon Size</td><td>70 - 150 bp</td></tr>
+            <tr><th colspan="2">Primer Settings</th></tr>
+            <tr><td>Primer Size</td><td>18 - 27 nt</td></tr>
+            <tr><td>Primer Tm</td><td>57.0°C - 64.0°C</td></tr>
+            <tr><td>Primer GC%</td><td>40.0% - 60.0%</td></tr>
+            <tr><th colspan="2">Chemistry</th></tr>
+            <tr><td>Mg2+ Concentration</td><td>1.5 mM</td></tr>
+            <tr><td>dNTP Concentration</td><td>0.6 mM</td></tr>
+            <tr><th colspan="2">Constraints</th></tr>
+            <tr><td>Min Distance from Variant</td><td>40 bp</td></tr>
+            <tr><td>Min Distance from Exon Junction</td><td>60 bp</td></tr>
+            <tr><th colspan="2">Homology Discrimination</th></tr>
+            <tr><td>Pseudogene Discrimination</td><td>Enabled</td></tr>
+        </table>
+        
+        </section>
+
+        <section class="results">
+            <h2>Design Results</h2>
+            
+            <div class="result-card">
+                <div class="result-header success">
+                    <div>
+                        <strong>Group 1</strong> - 1 variant(s) - Success
+                        <span style="color: #7f8c8d; margin-left: 10px;">Continuous: 3 specific, 0 non-specific (3 checked)</span>
+                    </div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="result-body">
+                    <h4>Variants</h4>
+                    
+                <div class="variant-info">
+                    <strong>Row 2:</strong> NBN - NM_002485.4<br>
+                    <strong>Variant:</strong> c.657_661delACAAA
+                    <br><strong>Genomic:</strong> 8:89971214-89971218 (-)
+                </div>
+                
+
+                    
+
+                    <h4>Primer Pairs</h4>
+        <div class="primer-pair">
+            <span class="pair-rank best">1</span>
+            <strong>Primer Pair 1</strong>
+            <p style="color: #7f8c8d;">Product Size: 453 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-ACCCCACTTTGGTACACAGAAC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.4°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-ACCCACCTCTTGATGAACCATC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.4°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">2</span>
+            <strong>Primer Pair 2</strong>
+            <p style="color: #7f8c8d;">Product Size: 289 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-CCGTAATCACAGCCATGATCAC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.5°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-ACCCACCTCTTGATGAACCATC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.6°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">3</span>
+            <strong>Primer Pair 3</strong>
+            <p style="color: #7f8c8d;">Product Size: 352 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GTTTCCTGTCCTTCTCACTTGC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.4°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-ACCCACCTCTTGATGAACCATC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.6°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+                    
+                    
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-header success">
+                    <div>
+                        <strong>Group 2</strong> - 1 variant(s) - Success
+                        <span style="color: #7f8c8d; margin-left: 10px;">Continuous: 3 specific, 0 non-specific (3 checked)</span>
+                    </div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="result-body">
+                    <h4>Variants</h4>
+                    
+                <div class="variant-info">
+                    <strong>Row 3:</strong> CHEK2 - NM_007194.4<br>
+                    <strong>Variant:</strong> c.470T>C
+                    <br><strong>Genomic:</strong> 22:28725099-28725099 (-)
+                </div>
+                
+
+                    
+
+                    <h4>Primer Pairs</h4>
+        <div class="primer-pair">
+            <span class="pair-rank best">1</span>
+            <strong>Primer Pair 1</strong>
+            <p style="color: #7f8c8d;">Product Size: 291 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GGCGTTTTCCTTTCCCTACAAG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.8°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TTGCTTTGATGAACCACTGCTG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">45.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.2°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">2</span>
+            <strong>Primer Pair 2</strong>
+            <p style="color: #7f8c8d;">Product Size: 330 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GGCGTTTTCCTTTCCCTACAAG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.8°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TGACAACTACTGGTTTGGGAGG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.9°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.1°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">3</span>
+            <strong>Primer Pair 3</strong>
+            <p style="color: #7f8c8d;">Product Size: 290 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GCGTTTTCCTTTCCCTACAAGC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.4°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TTGCTTTGATGAACCACTGCTG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">45.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.4°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+                    
+                    
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-header success">
+                    <div>
+                        <strong>Group 3</strong> - 1 variant(s) - Success
+                        <span style="color: #7f8c8d; margin-left: 10px;">Continuous: 3 specific, 0 non-specific (3 checked)</span>
+                    </div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="result-body">
+                    <h4>Variants</h4>
+                    
+                <div class="variant-info">
+                    <strong>Row 4:</strong> BRCA1 - NM_007294.4<br>
+                    <strong>Variant:</strong> c.116G>A
+                    <br><strong>Genomic:</strong> 17:43115744-43115744 (-)
+                </div>
+                
+
+                    
+
+                    <h4>Primer Pairs</h4>
+        <div class="primer-pair">
+            <span class="pair-rank best">1</span>
+            <strong>Primer Pair 1</strong>
+            <p style="color: #7f8c8d;">Product Size: 466 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GTTGCAGTGAGCCAAGATCATG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TGAGGCCTTATGTTGACTCAGTC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.1°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">47.8%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">23</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.1°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">2</span>
+            <strong>Primer Pair 2</strong>
+            <p style="color: #7f8c8d;">Product Size: 473 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GTTGCAGTGAGCCAAGATCATG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-ACGAACTTGAGGCCTTATGTTG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">58.9°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">45.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">1.2°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">3</span>
+            <strong>Primer Pair 3</strong>
+            <p style="color: #7f8c8d;">Product Size: 472 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-GTTGCAGTGAGCCAAGATCATG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-CGAACTTGAGGCCTTATGTTGAC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.9°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">47.8%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">23</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.3°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+                    
+                    
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-header success">
+                    <div>
+                        <strong>Group 4</strong> - 1 variant(s) - Success
+                        <span style="color: #7f8c8d; margin-left: 10px;">Continuous: 3 specific, 0 non-specific (3 checked)</span>
+                    </div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="result-body">
+                    <h4>Variants</h4>
+                    
+                <div class="variant-info">
+                    <strong>Row 5:</strong> APC - NM_000038.6<br>
+                    <strong>Variant:</strong> c.7519C>T
+                    <br><strong>Genomic:</strong> 5:112843113-112843113 (+)
+                </div>
+                
+
+                    
+
+                    <h4>Primer Pairs</h4>
+        <div class="primer-pair">
+            <span class="pair-rank best">1</span>
+            <strong>Primer Pair 1</strong>
+            <p style="color: #7f8c8d;">Product Size: 291 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-CATCTAGACCAGCTTCTCCCAC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.9°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">54.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TCCAAGTGCTTACTCGAGGAAG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.8°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.1°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">2</span>
+            <strong>Primer Pair 2</strong>
+            <p style="color: #7f8c8d;">Product Size: 294 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-CATCTAGACCAGCTTCTCCCAC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.9°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">54.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TTCTCCAAGTGCTTACTCGAGG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">59.8°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.1°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">3</span>
+            <strong>Primer Pair 3</strong>
+            <p style="color: #7f8c8d;">Product Size: 495 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-TTCCAAGAAGTGAGTCTGCCTC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-ATGAATGTTTGCTGTGCTCACG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.4°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">45.5%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.4°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">12.3</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+                    
+                    
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <div class="result-header success">
+                    <div>
+                        <strong>Group 5</strong> - 1 variant(s) - Success
+                        <span style="color: #7f8c8d; margin-left: 10px;">Continuous: 3 specific, 0 non-specific (3 checked)</span>
+                    </div>
+                    <span class="expand-icon">▼</span>
+                </div>
+                <div class="result-body">
+                    <h4>Variants</h4>
+                    
+                <div class="variant-info">
+                    <strong>Row 6:</strong> ATM - NM_000051.4<br>
+                    <strong>Variant:</strong> c.3848T>C
+                    <br><strong>Genomic:</strong> 11:108284328-108284328 (+)
+                </div>
+                
+
+                    
+
+                    <h4>Primer Pairs</h4>
+        <div class="primer-pair">
+            <span class="pair-rank best">1</span>
+            <strong>Primer Pair 1</strong>
+            <p style="color: #7f8c8d;">Product Size: 463 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-AAGGGTGCTACTGAACAAGGTC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TGGTAGCAGTCTCTCTTTGCTG-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.0°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.2°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">4.8</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">2</span>
+            <strong>Primer Pair 2</strong>
+            <p style="color: #7f8c8d;">Product Size: 460 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-AAGGGTGCTACTGAACAAGGTC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-TAGCAGTCTCTCTTTGCTGTGC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.6°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.4°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+        <div class="primer-pair">
+            <span class="pair-rank">3</span>
+            <strong>Primer Pair 3</strong>
+            <p style="color: #7f8c8d;">Product Size: 456 bp</p>
+
+            <div style="margin-top: 10px;">
+                <strong>Forward Primer:</strong>
+                <div class="primer-sequence">5'-AAGGGTGCTACTGAACAAGGTC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.2°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>Reverse Primer:</strong>
+                <div class="primer-sequence">5'-AGTCTCTCTTTGCTGTGCCATC-3'</div>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">60.6°C</div>
+                        <div class="metric-label">Tm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">50.0%</div>
+                        <div class="metric-label">GC%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">22</div>
+                        <div class="metric-label">Length</div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div style="margin-top: 15px;">
+                <strong>Pair Metrics:</strong>
+                <div class="primer-metrics">
+                    <div class="metric">
+                        <div class="metric-value">0.4°C</div>
+                        <div class="metric-label">ΔTm</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">0.0</div>
+                        <div class="metric-label">Pair Compl.</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="specificity-box specific">
+                <span class="verdict-label">✓ SPECIFIC</span>
+                — Amplifies ONLY the intended target
+                <div class="tool-summary">Tools: UCSC isPCR: OK</div>
+                
+                
+            </div>
+            
+        </div>
+        
+                    
+                    
+                </div>
+            </div>
+            
+        </section>
+
+        <section class="methodology">
+            <h2>Methodology</h2>
+            <div class="methodology-text">
+<h3>Primer Design</h3>
+<p>PCR primers were designed to amplify regions containing variant(s) in the following gene(s) and transcript(s): NBN (NM_002485.4), CHEK2 (NM_007194.4), BRCA1 (NM_007294.4), APC (NM_000038.6), ATM (NM_000051.4). 
+A total of 5 variant(s) were analysed: NBN NM_002485.4:c.657_661delACAAA; CHEK2 NM_007194.4:c.470T&gt;C; BRCA1 NM_007294.4:c.116G&gt;A; APC NM_000038.6:c.7519C&gt;T; ATM NM_000051.4:c.3848T&gt;C.</p>
+<p>All genomic coordinates were referenced to the GRCh38/hg38 human genome assembly. Coding DNA sequence (CDS) positions were mapped to genomic coordinates using the Ensembl REST API (https://rest.ensembl.org) and cross-validated against NCBI Entrez (https://eutils.ncbi.nlm.nih.gov/entrez/). Transcript annotations were verified against the MANE (Matched Annotation from NCBI and EBI) database to ensure use of clinically recommended reference sequences.</p>
+<p>Genomic sequences were retrieved from the Ensembl REST API, extending 250 bp on each side of each variant position to provide a search space for primer placement.</p>
+<h3>Population Variant Masking</h3>
+<p>Known population polymorphisms were obtained from the Ensembl Variation API (sourced from gnomAD v4). Positions with a minor allele frequency (MAF) &ge; 0.500% in the global (worldwide) population were masked with IUPAC ambiguity code "N" in the template sequence provided to the primer design engine. This masking ensures that primers do not bind at polymorphic positions, which could otherwise lead to allele-specific amplification bias or failure.</p>
+<h3>Primer Design Engine</h3>
+<p>Primers were designed using the Primer3 engine (via the primer3-py Python interface) with the following key parameters: amplicon size 100&ndash;500&nbsp;bp, primer melting temperature (Tm) 57.0&ndash;64.0&nbsp;&deg;C (optimal 60.0&nbsp;&deg;C), primer length 18&ndash;27&nbsp;nt (optimal 22&nbsp;nt), GC content 40.0&ndash;60.0% (optimal 50.0%). Thermodynamic calculations used the SantaLucia nearest-neighbour model with salt corrections for 50.0&nbsp;mM monovalent cations, 1.5&nbsp;mM Mg<sup>2+</sup>, 0.6&nbsp;mM dNTPs, and 50.0&nbsp;nM template DNA. Maximum self-complementarity was set to 8.0, 3' end complementarity to 3.0, and pair complementarity to 8.0 (Primer3 thermodynamic alignment scores).</p>
+<p>Primer placement was constrained to enforce a minimum distance of 40&nbsp;bp between the nearest primer edge and the variant position.</p>
+<h3>Pseudogene Discrimination</h3>
+<p>To minimise the risk of pseudogene co-amplification, a BLAST+-based homology analysis was performed for each target region. Flanking sequences were queried against the human genome using BLASTn (word size 11, evalue &le; 1e-10, minimum identity &ge; 85.0%, minimum aligned length &ge; 50&nbsp;nt) to identify homologous regions (pseudogenes, segmental duplications). 
+No significant homologous regions were detected for any of the target loci, so standard Primer3 ranking was used.</p>
+<h3>Specificity Verification</h3>
+<p>Primer specificity was verified using: UCSC In-Silico PCR (https://genome.ucsc.edu/cgi-bin/hgPcr), which simulates PCR amplification against the full genome assembly (GRCh38/hg38) to detect off-target binding sites. 
+Continuous design mode was used: for each variant, up to 20 candidate primer pairs were generated by Primer3 and evaluated sequentially for specificity until at least 3 verified-specific pair(s) were found per variant, or all candidates were exhausted.</p>
+<h3>Results Summary</h3>
+<p>Primer design was completed for 5 of 5 variant group(s). 
+A total of 15 primer pair(s) were generated. 
+Of these, 15 pair(s) were confirmed as specific (amplifying only the intended target). 
+</p>
+<h3>Per-Variant Details</h3>
+<table class="variant-detail-table">
+<tr><th>Gene</th><th>Transcript</th><th>Variant</th><th>MAF&nbsp;Threshold</th><th>Pairs</th><th>Amplicon Size</th>
+<th>Specific</th>
+<th>Homology</th></tr>
+<tr><td>NBN</td><td>NM_002485.4</td><td>c.657_661delACAAA</td><td>0.500%</td><td>3</td><td>289&ndash;453&nbsp;bp</td>
+<td>3</td>
+<td>&mdash;</td></tr>
+<tr><td>CHEK2</td><td>NM_007194.4</td><td>c.470T&gt;C</td><td>0.500%</td><td>3</td><td>290&ndash;330&nbsp;bp</td>
+<td>3</td>
+<td>&mdash;</td></tr>
+<tr><td>BRCA1</td><td>NM_007294.4</td><td>c.116G&gt;A</td><td>0.500%</td><td>3</td><td>466&ndash;473&nbsp;bp</td>
+<td>3</td>
+<td>&mdash;</td></tr>
+<tr><td>APC</td><td>NM_000038.6</td><td>c.7519C&gt;T</td><td>0.500%</td><td>3</td><td>291&ndash;495&nbsp;bp</td>
+<td>3</td>
+<td>&mdash;</td></tr>
+<tr><td>ATM</td><td>NM_000051.4</td><td>c.3848T&gt;C</td><td>0.500%</td><td>3</td><td>456&ndash;463&nbsp;bp</td>
+<td>3</td>
+<td>&mdash;</td></tr>
+</table>
+<h3>Software and Databases</h3>
+<p>Primer design was performed using Primer Designer [Early Beta], a Python application integrating the following components:</p><ul><li>Primer3 (via primer3-py) &mdash; thermodynamic primer design engine</li><li>Ensembl REST API &mdash; genomic sequence retrieval, variant annotation, coordinate mapping</li><li>NCBI Entrez &mdash; transcript validation and cross-referencing</li><li>MANE database &mdash; Matched Annotation from NCBI and EBI for clinically recommended transcripts</li>
+<li>gnomAD v4 (via Ensembl Variation API) &mdash; population variant frequencies for primer-site masking</li>
+<li>BLAST+ (BLASTn) &mdash; local homology analysis for pseudogene detection and primer discrimination scoring</li>
+<li>UCSC In-Silico PCR &mdash; genome-wide specificity simulation</li>
+</ul>
+<div class="methodology-note">Note: This methodology section was auto-generated based on the parameters and tools used in this design session. Verify all details before including in a publication or report.</div>
+</div>
+        </section>
+
+        <footer>
+            <p>Primer Designer [Early Beta] Report | Reference Assembly: GRCh38</p>
+        </footer>
+    </div>
+
+    <script>
+        
+        document.querySelectorAll('.result-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const body = header.nextElementSibling;
+                body.classList.toggle('active');
+                header.classList.toggle('expanded');
+            });
+        });
+        
+    </script>
+</body>
+</html>
