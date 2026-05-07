@@ -163,17 +163,16 @@ The `data/` directory contains ready-to-use example files:
 
 ## Evaluation artifacts
 
-For reference and reproducibility (e.g. for use in scientific publications), the repository ships with the example input files together with the actual logs and HTML reports produced by running them through the application. **All runs were performed using the default settings shipped in `config.json` — no parameters were tuned.**
+For reference and reproducibility (e.g. for use in scientific publications), the repository ships with the example input files together with the HTML reports produced by running them through the application. **All runs were performed using the default settings shipped in `config.json` — no parameters were tuned.**
 
-| Input | Generated report | Run log |
-|-------|------------------|---------|
-| [`data/example_1.csv`](data/example_1.csv) | [`reports/primer_design_report.html`](reports/primer_design_report.html) | [`logs/primer_designer_20260425_204300.log`](logs/primer_designer_20260425_204300.log) |
-| [`data/example_2.csv`](data/example_2.csv) | [`reports/primer_design_report_2.html`](reports/primer_design_report_2.html) | [`logs/primer_designer_20260425_204300.log`](logs/primer_designer_20260425_204300.log) |
-| [`data/example_3.csv`](data/example_3.csv) | [`reports/primer_design_report_3.html`](reports/primer_design_report_3.html) | [`logs/primer_designer_20260425_204300.log`](logs/primer_designer_20260425_204300.log) |
+| Input | Generated report |
+|-------|------------------|
+| [`data/example_1.csv`](data/example_1.csv) | [`reports/primer_design_report.html`](reports/primer_design_report.html) |
+| [`data/example_2.csv`](data/example_2.csv) | [`reports/primer_design_report_2.html`](reports/primer_design_report_2.html) |
+| [`data/example_3.csv`](data/example_3.csv) | [`reports/primer_design_report_3.html`](reports/primer_design_report_3.html) |
 
 - **Example variant inputs** are in [`data/`](data/).
 - **Generated reports** (HTML, openable in any browser) are in [`reports/`](reports/).
-- **Run log** (full pipeline trace: validation, coordinate mapping, Primer3 design, BLAST homology) is in [`logs/`](logs/).
 - **Unit tests** are in [`tests/`](tests/) and can be executed with `venv/bin/python -m pytest tests/`.
 
 ---
