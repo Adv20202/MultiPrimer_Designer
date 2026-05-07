@@ -31,9 +31,8 @@ tools/
 data/fasta_sequences/*.fa
 data/fasta_sequences/*.fasta
 
-# Logs (runtime generated) — except the published example evaluation log
+# Logs (runtime generated)
 logs/*.log
-!logs/primer_designer_20260425_204300.log
 
 # Archive/backup
 src.zip
